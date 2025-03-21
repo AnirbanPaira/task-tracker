@@ -1,5 +1,4 @@
-// src/components/TaskList.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { selectFilteredTasks, reorderTasks } from '../features/tasks/tasksSlice';
 import TaskItem from './TaskItem.tsx';
@@ -10,6 +9,16 @@ const TaskList = () => {
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(selectFilteredTasks);
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [ready, setReady] = useState(false);
+  
+  // Force a re-render after initial mount to ensure DnD is properly initialized
+  useEffect(() => {
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      setReady(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleDragEnd = (result) => {
     if (!result.destination) return;
@@ -165,6 +174,14 @@ const TaskList = () => {
     display: 'flex',
     flexDirection: 'column',
     gap: '14px',
+    minHeight: tasks.length ? 'auto' : '100px', // Ensure there's always a droppable area
+  };
+  
+  const loadingStyle = {
+    textAlign: 'center',
+    padding: '40px 0',
+    color: '#6b7280',
+    fontSize: '16px',
   };
   
   const [exportHovered, setExportHovered] = useState(false);
@@ -203,6 +220,10 @@ const TaskList = () => {
         <div style={emptyMessageStyle}>
           No tasks found. Add some tasks to get started!
         </div>
+      ) : !ready ? (
+        <div style={loadingStyle}>
+          Initializing tasks...
+        </div>
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="taskList">
@@ -225,9 +246,12 @@ const TaskList = () => {
                         {...provided.dragHandleProps}
                         style={{
                           ...provided.draggableProps.style,
-                          transform: snapshot.isDragging ? provided.draggableProps.style.transform : "none",
+                          // Keep the transform property as-is - this is crucial for drag functionality
                           boxShadow: snapshot.isDragging ? "0 10px 20px rgba(0, 0, 0, 0.1)" : "none",
-                          transition: "box-shadow 0.2s ease",
+                          opacity: snapshot.isDragging ? 0.8 : 1,
+                          backgroundColor: snapshot.isDragging ? "#f9fafb" : "transparent",
+                          borderRadius: "8px",
+                          transition: "box-shadow 0.2s ease, opacity 0.2s ease, background-color 0.2s ease",
                         }}
                       >
                         <TaskItem
