@@ -1,6 +1,8 @@
 // src/App.jsx
 import React from 'react';
 import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { store } from './app/store';
 import Header from './components/Header';
 import TaskList from './components/TaskList';
@@ -29,6 +31,7 @@ function App() {
               </Routes>
             </div>
           </div>
+          <ToastContainer />
         </Router>
       </DndProvider>
     </Provider>

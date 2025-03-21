@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { addTask, updateTask, addCategory } from '../features/tasks/tasksSlice';
+import { toast } from 'react-toastify';
 
 const TaskForm = ({ editTask = null, onCancel = null }) => {
   const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ const TaskForm = ({ editTask = null, onCancel = null }) => {
           category: category || null,
         })
       );
+      toast.success('Task updated successfully!');
       if (onCancel) onCancel();
     } else {
       dispatch(
@@ -49,6 +51,7 @@ const TaskForm = ({ editTask = null, onCancel = null }) => {
           category: category || null,
         })
       );
+      toast.success('Task added successfully!');
       // Reset form
       setTitle('');
       setDescription('');

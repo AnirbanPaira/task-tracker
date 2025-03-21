@@ -5,6 +5,7 @@ import { toggleTask, removeTask } from '../features/tasks/tasksSlice.js';
 import TaskForm from './TaskForm.jsx';
 import PriorityBadge from './PriorityBadge.tsx';
 import CategoryBadge from './CategoryBadge.tsx';
+import { toast } from 'react-toastify';
 
 const TaskItem = ({ task, isEditing, onEditStart, onEditEnd }) => {
   const dispatch = useAppDispatch();
@@ -19,6 +20,7 @@ const TaskItem = ({ task, isEditing, onEditStart, onEditEnd }) => {
   const handleRemove = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       dispatch(removeTask(task.id));
+      toast.success('Task deleted successfully!');
     }
   };
   
